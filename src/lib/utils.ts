@@ -1,14 +1,10 @@
+import type { Question } from "@/types/quiz";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { type Question } from "@/context/quiz";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-
-
-// src/lib/quizUtils.ts
-
 
 type APIQuestion = {
   question: string;

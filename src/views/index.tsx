@@ -1,10 +1,7 @@
-import { type Question, QuizContext } from "@/context/quiz";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { transformApiResponse } from "@/lib/utils";
-import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { mockReponse, mockReview } from "@/mock-data";
+import { mockReview } from "@/mock-data";
 import { Button } from "@/components/ui/button";
 import { H2, H3, H4, P } from "@/components/ui/typography";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,17 +10,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 
 export default function LandingPage() {
-    const { dispatch } = useContext(QuizContext);
     const navigate = useNavigate()
 
     const startQuiz = async () => {
         // const data = await fetch('https://opentdb.com/api.php?amount=2')
         //     .then((res) => res.json())
         //     .then((data) => data.results);
-
-        const questions: Question[] = transformApiResponse({ results: mockReponse.results });
-        console.log('Questions : ', questions);
-        dispatch({ type: "START_QUIZ", payload: { questions, duration: 300 } });
         toast('Quizz started, redirect to the quizz', { duration: 3000 });
         navigate('/quiz')
     };

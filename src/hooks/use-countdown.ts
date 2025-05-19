@@ -7,7 +7,7 @@ type UseCountdownOptions = {
   onComplete?: () => void;
 };
 
-export function useCountdownTimer({ duration, autoStart = false, onComplete }: UseCountdownOptions) {
+export function useCountDownTimer({ duration, autoStart = false, onComplete }: UseCountdownOptions) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isRunning, setIsRunning] = useState(autoStart);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);

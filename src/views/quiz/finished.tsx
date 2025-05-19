@@ -1,63 +1,79 @@
-import type { QuizState } from "@/context/quiz";
 import { Card, CardContent } from "@/components/ui/card";
-import { Ban, SquareCheckBig, TimerOff} from "lucide-react";
+import { Ban, SquareCheckBig, TimerOff } from "lucide-react";
 import { H1, H3 } from "@/components/ui/typography";
+import { useQuizStore } from "@/hooks/use-quiz";
+import { useMemo } from "react";
 
-export default function FinishedQuiz({ state }: { state: QuizState }) {
+export default function FinishedQuiz() {
 
-    const results = state.questions.map((q, i) => ({
-        question: q.question,
-        correct_answer: q.correct_answer,
-        answer: state.answers[i],
-        isCorrect: q.correct_answer === state.answers[i],
-    }));
+    const questions = useQuizStore((s) => s.state.questions);
+    const answers = useQuizStore((s) => s.state.answers);
+    const {
+        results,
+        totalCorrect,
+        totalWrong,
+        totalTimeOut,
+    } = useMemo(() => {
+        const results = questions.map((q, i) => {
+            const answer = answers[i] ?? null;
+            const isCorrect = q.correct_answer === answer;
+            return {
+                question: q.question,
+                correct_answer: q.correct_answer,
+                answer,
+                isCorrect,
+            };
+        });
 
-    const totalCorrect = results.filter((r) => r.isCorrect).length;
-    const totalWrong = results.length - totalCorrect;
-    const totalTimeOut = results.filter((r) => r.answer == null).length;
+        const totalCorrect = results.filter((r) => r.isCorrect).length;
+        const totalWrong = results.length - totalCorrect;
+        const totalTimeOut = results.filter((r) => r.answer == null).length;
+
+        return { results, totalCorrect, totalWrong, totalTimeOut };
+    }, [questions, answers]);
 
     return (
         <main className="pr-6 py-6">
             <div className="flex justify-center gap-3 my-12 sticky top-4">
-            <Card className="max-w-56 p-1">
-                <CardContent className="p-1">
-                    <div className="flex items-start">
-                        <div className="flex items-center gap-2">
-                            <SquareCheckBig size={40} className="text-green-600"/>
-                            <div className="w-full ml-1">
-                                <H3>Total Correct Answer</H3>
-                                <H1>{totalCorrect}</H1>
+                <Card className="max-w-56 p-1">
+                    <CardContent className="p-1">
+                        <div className="flex items-start">
+                            <div className="flex items-center gap-2">
+                                <SquareCheckBig size={40} className="text-green-600" />
+                                <div className="w-full ml-1">
+                                    <H3>Total Correct Answer</H3>
+                                    <H1>{totalCorrect}</H1>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </CardContent>
-            </Card>
-            <Card className="max-w-56 p-1">
-                <CardContent className="p-1">
-                    <div className="flex items-start">
-                        <div className="flex items-center gap-2">
-                            <Ban size={40} className="text-red-500"/>
-                            <div className="w-full ml-1">
-                                <H3>Total Wrong Answer</H3>
-                                <H1>{totalWrong}</H1>
+                    </CardContent>
+                </Card>
+                <Card className="max-w-56 p-1">
+                    <CardContent className="p-1">
+                        <div className="flex items-start">
+                            <div className="flex items-center gap-2">
+                                <Ban size={40} className="text-red-500" />
+                                <div className="w-full ml-1">
+                                    <H3>Total Wrong Answer</H3>
+                                    <H1>{totalWrong}</H1>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </CardContent>
-            </Card>
-            <Card className="max-w-56 p-1">
-                <CardContent className="p-1">
-                    <div className="flex items-start">
-                        <div className="flex items-center gap-2">
-                            <TimerOff size={40} className="text-slate-500"/>
-                            <div className="w-full ml-1">
-                                <H3>Total Timeout</H3>
-                                <H1>{totalTimeOut}</H1>
+                    </CardContent>
+                </Card>
+                <Card className="max-w-56 p-1">
+                    <CardContent className="p-1">
+                        <div className="flex items-start">
+                            <div className="flex items-center gap-2">
+                                <TimerOff size={40} className="text-slate-500" />
+                                <div className="w-full ml-1">
+                                    <H3>Total Timeout</H3>
+                                    <H1>{totalTimeOut}</H1>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
             </div>
             <table>
                 <thead>

@@ -9,12 +9,10 @@ import HomePage from "./views/home"
 import LandingPage from "./views"
 
 const router = createBrowserRouter([
+  { path: "/", element: <LandingPage /> },
+  { path: "/login", element: <LoginPage /> },
   {
-    path: "/",
-    element: <LandingPage />
-  },
-  {
-    path: "/",
+    path: "/", 
     element: <AuthMiddleware />,
     children: [
       {
@@ -28,10 +26,6 @@ const router = createBrowserRouter([
         ],
       },
     ],
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
   },
 ])
 
