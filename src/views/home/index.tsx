@@ -1,60 +1,107 @@
-import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Card, CardContent } from "@/components/ui/card"
 import { transformApiResponse } from "@/lib/utils";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { mockReponse } from "@/mock-data";
-import type { Question } from "@/types/quiz";
+import { listsCategory } from "@/mock-data";
+// import { mockReponse } from "@/mock-data";
+import type { Question } from "@/types/quiz-state";
 import { useQuizStore } from "@/hooks/use-quiz";
+import { H2, H3, P, Small } from "@/components/ui/typography";
+import { Input } from "@/components/ui/input";
+import { SelectDifficulty } from "@/components/fragments/select-difficulty";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { SelectCategories } from "@/components/fragments/select-categories";
+import { useQuizOptionsStore } from "@/hooks/use-quiz-options";
+import { Users } from "lucide-react";
+import { getQuiz, getQuizByCategory, getRandomQuiz } from "@/services/quiz";
 
-export default function HomePage() {
+export function HomePage() {
     const navigate = useNavigate()
 
     const startQuiz = useQuizStore((s) => s.startQuiz)
+    const options = useQuizOptionsStore((s) => s.state)
+    const setCategory = useQuizOptionsStore((s) => s.setCategory)
 
-    const handleStartQuiz = async () => {
-        // const data = await fetch('https://opentdb.com/api.php?amount=2')
-        //     .then((res) => res.json())
-        //     .then((data) => data.results);
+    const sortedCategory = listsCategory.sort((a, b) => b.total - a.total)
 
-        const questions: Question[] = transformApiResponse({ results: mockReponse.results });
-        console.log('Questions : ', questions);
-        startQuiz(questions, 300)
-        toast('Quizz started, redirect to the quizz', { duration: 3000 });
+    const handleStartQuizRandom = async () => {
+        const data = await getRandomQuiz()
+        const questions: Question[] = transformApiResponse({ results: data });
+        startQuiz(questions)
+        toast('Quizz is ready to start, choose your category', { duration: 6000 });
+        navigate('/quiz')
+    };
+    const handleStartQuizWithSettings = async () => {
+        const data = await getQuiz(options);
+        const questions: Question[] = transformApiResponse({ results: data });
+        startQuiz(questions)
+        toast('Quizz is ready to start, choose your category', { duration: 6000 });
+        navigate('/quiz')
+    };
+    const handleStartQuizByCategory = async (category: number) => {
+        const data = await getQuizByCategory(category);
+        const questions: Question[] = transformApiResponse({ results: data });
+        const categoryName = listsCategory.find((c) => c.no === category)?.category
+        setCategory(category)
+        startQuiz(questions)
+        toast(`Start Quizz with category ${categoryName}`, { duration: 6000 });
         navigate('/quiz')
     };
 
-    return (
-        <main className="w-full flex justify-center items-center">
-            <Card className="text-center mx-auto">
-                <CardHeader>
-                    <CardTitle className="text-lg">Start Quiz</CardTitle>
-                    <CardDescription className="text-lg">Start Quizz for your knowledge</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <AlertDialog>
-                        <AlertDialogTrigger className="px-8 py-4 rounded-lg bg-primary text-3xl font-semibold text-primary-foreground cursor-pointer">Start Quizz</AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    After this, your quizz will be starting
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleStartQuiz}>Continue</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
+    const amount = useQuizOptionsStore((s) => s.state.amount);
+    const setAmount = useQuizOptionsStore((s) => s.setAmount);
 
-                </CardContent>
-                <CardFooter>
-                    <CardDescription className="text-lg">
-                        Let's see how many questions you can answer:
-                    </CardDescription>
-                </CardFooter>
-            </Card>
+    return (
+        <main className="flex flex-col justify-center">
+
+            <div className="flex justify-between items-center px-12 py-2 my-6">
+                <div>
+                    <Button onClick={handleStartQuizRandom}>Start</Button>
+                    <Small>Start With Random Question</Small>
+                </div>
+                <Separator orientation="vertical" />
+                <div className="flex gap-2.5">
+                    <div>
+                        <SelectCategories />
+                        <Small>Category Questions</Small>
+                    </div>
+                    <div>
+                        <SelectDifficulty />
+                        <Small>Level Question</Small>
+                    </div>
+                    <div>
+                        <Input type="number" placeholder="Amount of question" defaultValue={amount} onChange={(e) => setAmount(Number(e.target.value))} />
+                        <Small>Total question</Small>
+                    </div>
+                    <div>
+                        <Button onClick={handleStartQuizWithSettings}>Start Quizz</Button>
+                        <Small>Start Quiz with this settings</Small>
+                    </div>
+                </div>
+            </div>
+            
+            <Separator />
+
+            <H2 className="text-center my-6">Top Categories</H2>
+
+            <div className="w-full flex justify-center gap-12 flex-wrap pr-12 ">
+                {sortedCategory.map((category, i) => (
+                    <Card className="min-w-2xs px-0" key={i}>
+                        <CardContent className="w-full flex items-center gap-3 px-2">
+                            <category.icon width={52} height={52} />
+                            <div className="flex flex-col">
+                                <H3>{category.category}</H3>
+                                <H2 className="flex items-end">{category.total}
+                                    <Users size={14} />
+                                </H2>
+                                <P>people choice this categories</P>
+                                <Button onClick={() => handleStartQuizByCategory(category.no)} variant={"secondary"} >Start</Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
         </main>
     )
 }

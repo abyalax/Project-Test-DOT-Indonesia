@@ -1,3 +1,6 @@
+import { Award, BookText, Brain, Bus, Clapperboard, Computer, Disc3, Gamepad2, GlobeLock, History, KeyboardMusic, Leaf, Music, Palette, PawPrint, Scale, Smartphone, SquareSigma, SunSnow, Tv, UserCheck, Video, type LucideProps } from "lucide-react"
+import type { ForwardRefExoticComponent } from "react"
+
 export const mockReponse = {
   response_code: 0,
   results: [
@@ -188,4 +191,158 @@ export const mockReview: MockReview[] = [
     time: "Yesterday",
     review: "I shared this with my friends and now we’re all competing for high scores. It’s turned into a daily ritual for us!"
   }
+]
+
+interface MockListCategory {
+  category: string
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref">>
+  total: number
+  no: number
+}
+
+export const listsCategory: MockListCategory[] = [
+  {
+    category: "General Knowledge",
+    icon: Brain,
+    total: 519,
+    no: 9,
+  },
+  {
+    category: "Entertainment: Books",
+    icon: BookText,
+    total: 137,
+    no: 10,
+  },
+  {
+    category: "Entertainment: Film",
+    icon: Clapperboard,
+    total: 319,
+    no: 11,
+  },
+  {
+    category: "Entertainment: Music",
+    icon: Disc3,
+    total: 137,
+    no: 12,
+  },
+  {
+    category: "Entertainment: Musicals & Theatres",
+    icon: Music,
+    total: 329,
+    no: 13,
+  },
+  {
+    category: "Entertainment: Television",
+    icon: Tv,
+    total: 321,
+    no: 14,
+  },
+  {
+    category: "Entertainment: Video Games",
+    icon: Gamepad2,
+    total: 219,
+    no: 15,
+  },
+  {
+    category: "Entertainment: Board Games",
+    icon: KeyboardMusic,
+    total: 137,
+    no: 16,
+  },
+  {
+    category: "Science & Nature",
+    icon: Leaf,
+    total: 189,
+    no: 17,
+  },
+  {
+    category: "Science: Computers",
+    icon: Computer,
+    total: 99,
+    no: 18,
+  },
+  {
+    category: "Science Mathematics",
+    icon: SquareSigma,
+    total: 129,
+    no: 19,
+  },
+  {
+    category: "Mythology",
+    icon: SunSnow,
+    total: 171,
+    no: 20,
+  },
+  {
+    category: "Sports",
+    icon: Award,
+    total: 310,
+    no: 21,
+  },
+  {
+    category: "Geography",
+    icon: GlobeLock,
+    total: 171,
+    no: 22,
+  },
+  {
+    category: "History",
+    icon: History,
+    total: 170,
+    no: 23,
+  },
+  {
+    category: "Politics",
+    icon: Scale,
+    total: 320,
+    no: 24,
+  },
+  {
+    category: "Art",
+    icon: Palette,
+    total: 319,
+    no: 25,
+  },
+  {
+    category: "Celebrities",
+    icon: UserCheck,
+    total: 171,
+    no: 26,
+  },
+  {
+    category: "Animals",
+    icon: PawPrint,
+    total: 319,
+    no: 27,
+  },
+  {
+    category: "Vehicles",
+    icon: Bus,
+    total: 339,
+    no: 28,
+  },
+  {
+    category: "Entertainment: Comics",
+    icon: Video,
+    total: 127,
+    no: 29,
+  },
+  {
+    category: "Science: Gadgets",
+    icon: Smartphone,
+    total: 305,
+    no: 30,
+  },
+  {
+    category: "Entertainment: Japanese Anime & Manga",
+    icon: UserCheck,
+    total: 167,
+    no: 31,
+  },
+  {
+    category: "Entertainment: Cartoon & Animations",
+    icon: UserCheck,
+    total: 137,
+    no: 32,
+  },
 ]

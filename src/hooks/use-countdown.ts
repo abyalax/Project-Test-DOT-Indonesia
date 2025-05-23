@@ -1,4 +1,3 @@
-// hooks/useCountdownTimer.ts
 import { useEffect, useRef, useState } from "react";
 
 type UseCountdownOptions = {
@@ -11,19 +10,14 @@ export function useCountDownTimer({ duration, autoStart = false, onComplete }: U
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isRunning, setIsRunning] = useState(autoStart);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
   const pause = () => setIsRunning(false);
-  const start = () => {
-    setIsRunning(true);
-  };
+  const start = () => setIsRunning(true);
   const reset = () => {
     setIsRunning(false);
     setTimeLeft(duration);
   };
-
   useEffect(() => {
     if (!isRunning) return;
-
     intervalRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {

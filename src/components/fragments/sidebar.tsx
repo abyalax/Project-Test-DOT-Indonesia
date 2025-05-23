@@ -6,6 +6,7 @@ import { Button } from "../ui/button"
 import { useNavigate } from "react-router"
 import { useContext } from "react"
 import { AuthContext } from "@/context/auth"
+import { useQuizHistoryStore } from "@/hooks/use-history-quiz"
 
 
 export const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -19,13 +20,14 @@ const AppSidebar = () => {
 
     const navigate = useNavigate()
     const { auth } = useContext(AuthContext)
+    const quizID = useQuizHistoryStore((s) => s.getHistory().at(-1)?.id)
 
     const items = [
         { title: "Home", url: "/home", icon: Home },
         { title: "Kuis", url: "/quiz", icon: NotebookPen },
-        { title: "Results", url: "/results", icon: ListTodo },
-        { title: "History", url: "history", icon: Timer },
-        { title: "Setting", url: "#", icon: Settings },
+        { title: "Results", url: `/results/${quizID}`, icon: ListTodo },
+        { title: "History", url: "/history", icon: Timer },
+        { title: "Setting", url: "/settings", icon: Settings },
     ]
 
     const handleSignOut = () => {
@@ -55,10 +57,10 @@ const AppSidebar = () => {
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title} className="my-1 mx-2">
                                     <SidebarMenuButton asChild>
-                                        <a href={item.url}>
+                                        <button onClick={() => navigate(item.url)}>
                                             <item.icon width={40} height={40} className="transform scale-125" />
                                             <span className="text-lg mx-2">{item.title}</span>
-                                        </a>
+                                        </button>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}

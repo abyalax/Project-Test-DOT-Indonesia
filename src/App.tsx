@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner"
 export default function AppLayout() {
   return (
     <StrictMode>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={false}>
         <AppSidebar />
         <SidebarTrigger />
         <Outlet />

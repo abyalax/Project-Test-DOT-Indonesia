@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useEffect,
-  useState,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-} from "react";
+import { createContext, useEffect, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 
 interface AuthState {
   email: string;
@@ -39,5 +32,4 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
 export { AuthProvider, AuthContext };

@@ -24,17 +24,16 @@ export type QuizState = {
 export type QuizStore = {
     state: QuizState;
 
-    startQuiz: (questions: Question[], duration: number) => void;
+    startQuiz: (questions: Question[]) => void;
     pauseQuiz: (questionTimer: number) => void;
-    resumeQuiz: () => void;
+    resumeQuiz: (category: string) => void;
     resetQuiz: () => void;
-    finishQuiz: () => void;
+    finishQuiz: (category: string) => void;
     answerQuestion: (answer: string) => void;
     nextQuestion: () => void;
     timeOutQuestion: () => void;
     tickQuestionTimer: () => void;
     resetQuestionTimer: () => void;
-    getQuiz: () => QuizStore;
     getResults: () => {
         results: {
             question: string;
@@ -42,9 +41,9 @@ export type QuizStore = {
             answer: string | null;
             isCorrect: boolean;
         }[];
-        totalCorrect: number;
-        totalWrong: number;
-        totalTimeOut: number;
+        total_correct: number;
+        total_wrong: number;
+        total_timeout: number;
     };
 
 }

@@ -1,16 +1,16 @@
 import { useQuizStore } from "@/hooks/use-quiz";
-import { transformApiResponse } from "@/lib/utils";
-import { mockReponse } from "@/mock-data";
-import type { Question } from "@/types/quiz";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useCountDownTimer } from "@/hooks/use-countdown";
 import { useEffect } from "react";
-import FinishedQuiz from "./finished";
+import { Navigate } from "react-router";
+import { useQuizHistoryStore } from "@/hooks/use-history-quiz";
+import { QuizIddle } from "@/views/quiz/idle";
+import { useQuizOptionsStore } from "@/hooks/use-quiz-options";
+import { listsCategory } from "@/mock-data";
 
-const QuizPage = () => {
-  const sampleQuestions: Question[] = transformApiResponse({ results: mockReponse.results });
+export function QuizPage() {
 
   const state = useQuizStore((s) => s.state);
   const status = useQuizStore((s) => s.state.status);
@@ -18,7 +18,6 @@ const QuizPage = () => {
   const totalQuestions = useQuizStore((s) => s.state.questions.length);
   const currentQuestionIndex = useQuizStore((s) => s.state.currentQuestionIndex);
   const currentQuestion = useQuizStore((s) => s.state.questions[s.state.currentQuestionIndex]);
-  const startQuiz = useQuizStore((s) => s.startQuiz);
   const duration = useQuizStore((s) => s.state.duration);
   const questionTimer = useQuizStore((s) => s.state.questionTimer);
   const perQuestionDuration = useQuizStore((s) => s.state.perQuestionDuration);
@@ -26,11 +25,14 @@ const QuizPage = () => {
   const finishQuiz = useQuizStore((s) => s.finishQuiz);
   const pauseQuiz = useQuizStore((s) => s.pauseQuiz);
   const resumeQuiz = useQuizStore((s) => s.resumeQuiz);
-  const resetQuiz = useQuizStore((s) => s.resetQuiz);
   const answerQuestion = useQuizStore((s) => s.answerQuestion);
   const nextQuestion = useQuizStore((s) => s.nextQuestion);
   const tickQuestionTimer = useQuizStore((s) => s.tickQuestionTimer);
   const resetQuestionTimer = useQuizStore((s) => s.resetQuestionTimer);
+
+  const quizID = useQuizHistoryStore((s) => s.getHistory().at(-1)?.id)
+  const noCategory = useQuizOptionsStore((s) => s.state.category)
+  const categoryName = listsCategory.find((c) => c.no === noCategory)?.category ?? "General Knowledge"
 
   const {
     timeLeft: timeCountdown,
@@ -40,7 +42,7 @@ const QuizPage = () => {
   } = useCountDownTimer({
     duration: duration,
     autoStart: status === "in-progress",
-    onComplete: () => finishQuiz(),
+    onComplete: () => finishQuiz(categoryName),
   });
 
   const handleAnswer = (answer: string) => {
@@ -48,7 +50,7 @@ const QuizPage = () => {
     answerQuestion(answer);
     const isLastQuestion = currentQuestionIndex + 1 >= questions.length;
     if (isLastQuestion) {
-      finishQuiz();
+      finishQuiz(categoryName);
     } else {
       nextQuestion();
       resetQuestionTimer();
@@ -56,9 +58,14 @@ const QuizPage = () => {
   };
 
   useEffect(() => {
-    if (status === "paused") {
-      pauseCountdown();
-    } else if (status === "in-progress") {
+    console.log({ questionTimer }, { perQuestionDuration });
+    console.log((questionTimer / perQuestionDuration) * 100);
+
+    return () => { };
+  }, [perQuestionDuration, questionTimer]);
+
+  useEffect(() => {
+    if (status === "in-progress") {
       startCountdown();
     } else if (status === "idle") {
       resetCountdown();
@@ -75,15 +82,11 @@ const QuizPage = () => {
       if (currentQuestionIndex < questions.length - 1) {
         nextQuestion()
         resetQuestionTimer()
-      } else {
-        finishQuiz()
-      }
+      } else { finishQuiz(categoryName) }
     }
     return () => clearInterval(interval);
-  }, [status, questionTimer, currentQuestionIndex, questions.length, tickQuestionTimer, nextQuestion, resetQuestionTimer, finishQuiz]);
+  }, [status, questionTimer, currentQuestionIndex, questions.length, tickQuestionTimer, nextQuestion, resetQuestionTimer, finishQuiz, categoryName]);
 
-  if (status === 'idle') return <Button onClick={() => startQuiz(sampleQuestions, 60)}>Start</Button>;
-   if (state.status === "finished") return <FinishedQuiz />;
   if (status === 'in-progress' || status === 'paused') {
     return (
       <main className="w-full h-screen flex flex-col gap-4 py-10">
@@ -109,16 +112,16 @@ const QuizPage = () => {
           </Card>
         </div>
 
-        <Progress value={questionTimer / perQuestionDuration * 100} />
+        <Progress value={(questionTimer / perQuestionDuration) * 100} />
 
         <div className="w-full flex justify-center items-center my-12">
           <Card className="min-w-sm w-md">
             <CardHeader>
-              <p className="text-2xl text-justify">{currentQuestion.question}</p>
+              <p className="text-2xl text-justify">{currentQuestion?.question}</p>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-2">
-                {currentQuestion.all_answers.map((answer: string, i: number) => (
+                {currentQuestion?.all_answers.map((answer: string, i: number) => (
                   <Button className=" text-lg font-normal hover:bg-foreground hover:text-accent cursor-pointer hover:transform hover:scale-105" key={i} variant={"secondary"} size={"lg"} onClick={() => handleAnswer(answer)}>{answer}</Button>
                 ))}
               </div>
@@ -131,24 +134,17 @@ const QuizPage = () => {
 
         <Card>
           <CardContent className="flex justify-center gap-3 items-center">
-            <Button variant={"default"} onClick={() => pauseQuiz(questionTimer)}>
-              Pause
-            </Button>
-            <Button variant={"outline"} onClick={() => resumeQuiz()}>
-              Resume
-            </Button>
-            <Button variant={"destructive"} onClick={() => resetQuiz()}>
-              Reset
-            </Button>
+            {status === 'in-progress' && (
+              <Button variant={"default"} onClick={() => pauseQuiz(questionTimer)}>Pause</Button>
+            )}
+            {status === 'paused' && (
+              <Button variant={"outline"} onClick={() => resumeQuiz(categoryName)}>Resume</Button>
+            )}
           </CardContent>
         </Card>
-
       </main>
     );
   }
-
-  return <p>Status: {status}</p>;
-
+  if (state.status === "finished") return <Navigate to={`/results/${quizID}`} />;
+  if (state.status === "idle") return <QuizIddle />;
 };
-
-export default QuizPage;
