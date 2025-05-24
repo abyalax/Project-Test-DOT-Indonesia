@@ -151,3 +151,11 @@ Store yang tersedia:
 * `useQuizFilterStore` – filter tampilan riwayat
 
 ---
+
+## 📑 Documentation
+
+📄 Dokumentasi lebih lengkap ada di [resources/README.md](resources/README.md)
+
+### Wireframe Excalidraw
+
+[resources/wireframe](resources/wireframe.excalidraw)
