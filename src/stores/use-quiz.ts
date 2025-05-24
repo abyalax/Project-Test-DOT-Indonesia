@@ -42,7 +42,7 @@ export const useQuizStore = create<QuizStore>()(
                     });
                     localStorage.setItem('paused-quiz', JSON.stringify(get().state));
                 },
-                resumeQuiz: (category: string) => {
+                resumeQuiz: (category: string, difficulty: string) => {
                     const stored = localStorage.getItem('paused-quiz');
                     if (!stored) return;
                     const pausedState: QuizState = JSON.parse(stored);
@@ -56,7 +56,7 @@ export const useQuizStore = create<QuizStore>()(
                                 status: 'finished',
                             };
                         });
-                        get().finishQuiz(category);
+                        get().finishQuiz(category, difficulty);
                         return;
                     }
                     set((s) => {
@@ -103,10 +103,10 @@ export const useQuizStore = create<QuizStore>()(
                 },
                 resetQuestionTimer: () => {
                     set((s) => {
-                        s.state.questionTimer = 5;
+                        s.state.questionTimer = QUESTION_TIMER;
                     })
                 },
-                finishQuiz: (category: string) => {
+                finishQuiz: (category: string, difficulty: string) => {
                     set((s) => {
                         s.state.status = 'finished';
                         s.state.currentQuestionIndex = 0;
@@ -126,6 +126,7 @@ export const useQuizStore = create<QuizStore>()(
                             id: nanoid(),
                             date: now,
                             category: category,
+                            difficulty: difficulty,
                             results: results.results,
                             total_correct: results.total_correct,
                             total_wrong: results.total_wrong,

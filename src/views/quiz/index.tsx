@@ -1,14 +1,15 @@
-import { useQuizStore } from "@/hooks/use-quiz";
+import { useQuizStore } from "@/stores/use-quiz";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/components/fragments/progress";
 import { useCountDownTimer } from "@/hooks/use-countdown";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Navigate } from "react-router";
-import { useQuizHistoryStore } from "@/hooks/use-history-quiz";
+import { useQuizHistoryStore } from "@/stores/use-history-quiz";
 import { QuizIddle } from "@/views/quiz/idle";
-import { useQuizOptionsStore } from "@/hooks/use-quiz-options";
+import { useQuizOptionsStore } from "@/stores/use-quiz-options";
 import { listsCategory } from "@/mock-data";
+import { INTERVAL_MS } from "@/lib/config";
 
 export function QuizPage() {
 
@@ -30,9 +31,15 @@ export function QuizPage() {
   const tickQuestionTimer = useQuizStore((s) => s.tickQuestionTimer);
   const resetQuestionTimer = useQuizStore((s) => s.resetQuestionTimer);
 
-  const quizID = useQuizHistoryStore((s) => s.getHistory().at(-1)?.id)
+  const difficulty = useQuizOptionsStore((s) => s.state.difficulty);
+
+  const quizID = useQuizHistoryStore((s) => s.getHistory()[0]?.id)
   const noCategory = useQuizOptionsStore((s) => s.state.category)
   const categoryName = listsCategory.find((c) => c.no === noCategory)?.category ?? "General Knowledge"
+
+  const handleComplete = useCallback(() => {
+    finishQuiz(categoryName, difficulty ?? "Easy");
+  }, [categoryName, difficulty, finishQuiz]);
 
   const {
     timeLeft: timeCountdown,
@@ -40,9 +47,9 @@ export function QuizPage() {
     pause: pauseCountdown,
     reset: resetCountdown
   } = useCountDownTimer({
-    duration: duration,
+    duration,
     autoStart: status === "in-progress",
-    onComplete: () => finishQuiz(categoryName),
+    onComplete: handleComplete,
   });
 
   const handleAnswer = (answer: string) => {
@@ -50,7 +57,7 @@ export function QuizPage() {
     answerQuestion(answer);
     const isLastQuestion = currentQuestionIndex + 1 >= questions.length;
     if (isLastQuestion) {
-      finishQuiz(categoryName);
+      finishQuiz(categoryName, difficulty ?? "Easy");
     } else {
       nextQuestion();
       resetQuestionTimer();
@@ -59,10 +66,12 @@ export function QuizPage() {
 
   useEffect(() => {
     console.log({ questionTimer }, { perQuestionDuration });
-    console.log((questionTimer / perQuestionDuration) * 100);
+    console.log(((questionTimer / perQuestionDuration) * 20));
+    console.log({ timeCountdown });
+    console.log({ status });
 
     return () => { };
-  }, [perQuestionDuration, questionTimer]);
+  }, [perQuestionDuration, questionTimer, status, timeCountdown]);
 
   useEffect(() => {
     if (status === "in-progress") {
@@ -76,16 +85,16 @@ export function QuizPage() {
     if (status !== "in-progress") return;
     const interval = setInterval(() => {
       tickQuestionTimer()
-    }, 1000);
+    }, INTERVAL_MS);
     if (questionTimer === 0) {
       clearInterval(interval);
       if (currentQuestionIndex < questions.length - 1) {
         nextQuestion()
         resetQuestionTimer()
-      } else { finishQuiz(categoryName) }
+      } else { finishQuiz(categoryName, difficulty ?? "Easy") }
     }
     return () => clearInterval(interval);
-  }, [status, questionTimer, currentQuestionIndex, questions.length, tickQuestionTimer, nextQuestion, resetQuestionTimer, finishQuiz, categoryName]);
+  }, [status, questionTimer, currentQuestionIndex, questions.length, tickQuestionTimer, nextQuestion, resetQuestionTimer, finishQuiz, categoryName, difficulty]);
 
   if (status === 'in-progress' || status === 'paused') {
     return (
@@ -112,7 +121,7 @@ export function QuizPage() {
           </Card>
         </div>
 
-        <Progress value={(questionTimer / perQuestionDuration) * 100} />
+        <Progress value={(questionTimer / perQuestionDuration) * 20} />
 
         <div className="w-full flex justify-center items-center my-12">
           <Card className="min-w-sm w-md">
@@ -138,13 +147,13 @@ export function QuizPage() {
               <Button variant={"default"} onClick={() => pauseQuiz(questionTimer)}>Pause</Button>
             )}
             {status === 'paused' && (
-              <Button variant={"outline"} onClick={() => resumeQuiz(categoryName)}>Resume</Button>
+              <Button variant={"outline"} onClick={() => resumeQuiz(categoryName, difficulty ?? "Easy")}>Resume</Button>
             )}
           </CardContent>
         </Card>
       </main>
     );
   }
-  if (state.status === "finished") return <Navigate to={`/results/${quizID}`} />;
+  if (state.status === "finished") return quizID ? <Navigate to={`/results/${quizID}`} /> : <QuizIddle />
   if (state.status === "idle") return <QuizIddle />;
 };

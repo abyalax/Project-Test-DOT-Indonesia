@@ -5,7 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useState } from "react"
 import { listsCategory } from "@/mock-data"
-import { useQuizOptionsStore } from "@/hooks/use-quiz-options"
+import { useQuizOptionsStore } from "@/stores/use-quiz-options"
 
 export function SelectCategories() {
     const [open, setOpen] = useState(false)

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { H1 } from "@/components/ui/typography";
-import { useQuizStore } from "@/hooks/use-quiz";
+import { useQuizStore } from "@/stores/use-quiz";
 import { formatDate, transformApiResponse } from "@/lib/utils";
 import { getRandomQuiz } from "@/services/quiz";
 import type { Question } from "@/types/quiz-state";

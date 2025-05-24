@@ -10,7 +10,7 @@ export const useQuizHistoryStore = create<HistoryStore>()(
                 history: [],
                 setHistory: (result: QuizResult) => {
                     set((state) => {
-                        state.history.push(result);
+                        state.history.unshift(result);
                     });
                 },
                 deleteHistory: (id: string) => {

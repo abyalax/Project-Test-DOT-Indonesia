@@ -1,58 +1,153 @@
-# React + TypeScript + Vite
+# 🛠️ Project Setup Guide
 
-link pengumpulan : 
+## 📦 Repository
+
+**GitHub:** [abyalax/Project-Test-DOT-Indonesia](https://github.com/abyalax/Project-Test-DOT-Indonesia)
+
+---
+
+## ✅ Requirement
+
+Sebelum memulai pengembangan atau menjalankan aplikasi, pastikan environment sudah memenuhi kebutuhan berikut:
+
+* **Node.js** `>=18.x`
+* **Package Manager:** `npm` atau `pnpm`
+* **Vite** (sudah terintegrasi secara otomatis melalui `devDependencies`)
+* **Modern browser** (untuk pengujian dan tampilan aplikasi)
+
+---
+
+## 🚀 Setup Development
+
+1. **Clone repository**
+
+   ```bash
+   git clone https://github.com/abyalax/Project-Test-DOT-Indonesia.git
+   cd Project-Test-DOT-Indonesia
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+   atau
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Jalankan aplikasi**
+
+   ```bash
+   npm run dev
+   ```
+
+   Aplikasi akan berjalan di `http://localhost:5173/`
+
+---
+
+## 🧩 Struktur Folder
+
+Berikut adalah struktur direktori utama dan deskripsinya:
+
+```plaintext
+📁 resources/          → Berisi dokumen pendukung
+├─ documentation.md    → Dokumentasi semi teknis
+├─ requirement.png     → Requierement dari DOT
+├─ wireframe.excalidraw→ Wireframe desain halaman sederhana
+
+📁 src/                → Folder utama kode aplikasi
+├─ components/         → Komponen UI umum (reusable)
+├─ context/            → Konteks global berbasis React Context API
+│  └─ auth.tsx         → Manajemen otentikasi pengguna (AuthContext)
+├─ hooks/              → Custom hooks lokal
+│  ├─ use-countdown.ts → Hook untuk countdown timer kuis
+│  └─ use-mobile.ts    → Deteksi tampilan mobile
+├─ lib/                → Utilitas global dan konfigurasi
+│  ├─ config.ts        → Konfigurasi default aplikasi (jumlah soal, dsb.)
+│  └─ utils.ts         → Fungsi utilitas
+├─ middlewares/        → Middleware untuk routing & otorisasi
+│  └─ auth.tsx         → Middleware pengecekan autentikasi pengguna
+├─ services/           → Layer komunikasi dengan API eksternal
+│  └─ quiz.ts          → Service fetch kuis dari Open Trivia DB
+├─ stores/             → State global menggunakan Zustand
+│  ├─ use-history-quiz.ts   → Store untuk riwayat kuis
+│  ├─ use-quiz-filter.ts    → Store untuk filter kuis
+│  ├─ use-quiz-options.ts   → Store untuk opsi kuis
+│  └─ use-quiz.ts           → Store utama untuk data kuis
+├─ types/              → Definisi tipe TypeScript untuk berbagai entitas
+│  ├─ quiz-history.ts
+│  ├─ quiz-options.ts
+│  └─ quiz-state.ts
+├─ views/              → Halaman atau tampilan berdasarkan route
+│  ├─ history/         → Halaman Riwayat Kuis
+│  ├─ home/            → Halaman Beranda
+│  ├─ login/           → Halaman Login
+│  ├─ quiz/            → Halaman Kuis (index, idle)
+│  ├─ results/         → Halaman Hasil Kuis (dinamis berdasarkan ID)
+│  └─ settings/        → Halaman Pengaturan ( soon )
+│  └─ landing-page.tsx → Halaman awal / landing
+├─ App.tsx             → Root component
+├─ index.css           → Gaya global
+├─ main.tsx            → Entry point aplikasi (React + Vite)
+├─ mock-data.ts        → Data dummy (jika diperlukan)
+├─ routes.tsx          → Deklarasi semua route aplikasi
+└─ vite-env.d.ts       → Deklarasi tipe lingkungan Vite
+```
+
+---
+
+## 🔒 Login Credential (Simulasi)
+
+Aplikasi ini menggunakan otentikasi sederhana berbasis **React Context** dan disimpan di **localStorage**.
+Untuk keperluan demo/test, data login dummy bisa dilihat dengan mengklik tulisan berikut dibawah form login :
+
+> `See Dummy Credential at "Here"`
+
+📌 Jika diklik, akan muncul pop-up berisi:
+
+```plaintext
+Email: trivia@gmail.com
+Password: trivia
+```
+
+Atau bisa dilihat langsung di dokumentasi README atau file konfigurasi:
+
 ```sh
-https://docs.google.com/forms/d/e/1FAIpQLSfbURyjv7HMBDXqTsZebXWn2kWPXDd1zV6aKQcndT5POMujqw/formResponse
+└── src/lib/config.ts
 ```
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🧱 Middleware & Auth
 
-## Expanding the ESLint configuration
+Seluruh route utama (`/home`, `/quiz`, `/results/:id`, dll.) dilindungi oleh middleware:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```tsx
+middlewares/auth.tsx → <AuthMiddleware />
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Jika `auth.isAuthenticated === false`, pengguna akan otomatis diarahkan ke halaman login (`/login`).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## 🗂️ State Management
+
+Semua state global dikelola menggunakan:
+
+* **Zustand** dengan wrapper:
+
+  * `immer()` untuk immutable update
+  * `persist()` untuk menyimpan state ke localStorage
+  * `devtools()` untuk debug menggunakan Redux DevTools Extension
+
+Store yang tersedia:
+
+* `useQuizStore` – data kuis aktif
+* `useQuizOptionsStore` – opsi pemilihan kuis
+* `useHistoryQuizStore` – riwayat kuis
+* `useQuizFilterStore` – filter tampilan riwayat
+
+---

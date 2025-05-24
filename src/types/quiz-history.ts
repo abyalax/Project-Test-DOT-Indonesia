@@ -2,6 +2,7 @@ export interface QuizResult {
     id: string;
     date: string;
     category: string;
+    difficulty: string;
     results: {
         question: string;
         correct_answer: string;

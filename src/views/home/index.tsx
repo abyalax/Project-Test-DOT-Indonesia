@@ -5,14 +5,14 @@ import { toast } from "sonner";
 import { listsCategory } from "@/mock-data";
 // import { mockReponse } from "@/mock-data";
 import type { Question } from "@/types/quiz-state";
-import { useQuizStore } from "@/hooks/use-quiz";
+import { useQuizStore } from "@/stores/use-quiz";
 import { H2, H3, P, Small } from "@/components/ui/typography";
 import { Input } from "@/components/ui/input";
 import { SelectDifficulty } from "@/components/fragments/select-difficulty";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SelectCategories } from "@/components/fragments/select-categories";
-import { useQuizOptionsStore } from "@/hooks/use-quiz-options";
+import { useQuizOptionsStore } from "@/stores/use-quiz-options";
 import { Users } from "lucide-react";
 import { getQuiz, getQuizByCategory, getRandomQuiz } from "@/services/quiz";
 
@@ -80,7 +80,7 @@ export function HomePage() {
                     </div>
                 </div>
             </div>
-            
+
             <Separator />
 
             <H2 className="text-center my-6">Top Categories</H2>
@@ -90,12 +90,12 @@ export function HomePage() {
                     <Card className="min-w-2xs px-0" key={i}>
                         <CardContent className="w-full flex items-center gap-3 px-2">
                             <category.icon width={52} height={52} />
-                            <div className="flex flex-col">
+                            <div className="flex flex-col gap-2">
                                 <H3>{category.category}</H3>
                                 <H2 className="flex items-end">{category.total}
                                     <Users size={14} />
+                                    <P className="ml-3">People choice this categories</P>
                                 </H2>
-                                <P>people choice this categories</P>
                                 <Button onClick={() => handleStartQuizByCategory(category.no)} variant={"secondary"} >Start</Button>
                             </div>
                         </CardContent>

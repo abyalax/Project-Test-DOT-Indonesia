@@ -16,6 +16,8 @@ export function useCountDownTimer({ duration, autoStart = false, onComplete }: U
     setIsRunning(false);
     setTimeLeft(duration);
   };
+  console.log('Auto Start Countdown: ',autoStart);
+  
   useEffect(() => {
     if (!isRunning) return;
     intervalRef.current = setInterval(() => {
@@ -27,12 +29,13 @@ export function useCountDownTimer({ duration, autoStart = false, onComplete }: U
         }
         return prev - 1;
       });
+      
     }, 1000);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isRunning, onComplete]);
+  }, [isRunning, onComplete ]);
 
   return { timeLeft, isRunning, start, pause, reset };
 }

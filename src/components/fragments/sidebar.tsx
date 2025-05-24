@@ -6,7 +6,7 @@ import { Button } from "../ui/button"
 import { useNavigate } from "react-router"
 import { useContext } from "react"
 import { AuthContext } from "@/context/auth"
-import { useQuizHistoryStore } from "@/hooks/use-history-quiz"
+import { useQuizHistoryStore } from "@/stores/use-history-quiz"
 
 
 export const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -20,7 +20,7 @@ const AppSidebar = () => {
 
     const navigate = useNavigate()
     const { auth } = useContext(AuthContext)
-    const quizID = useQuizHistoryStore((s) => s.getHistory().at(-1)?.id)
+    const quizID = useQuizHistoryStore((s) => s.getHistory()[0]?.id)
 
     const items = [
         { title: "Home", url: "/home", icon: Home },

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useState } from "react"
-import { useQuizFilterStore } from "@/hooks/use-quiz-filter"
+import { useQuizFilterStore } from "@/stores/use-quiz-filter"
 import type { QuestionDifficulties } from "@/types/quiz-options"
 
 interface Options {

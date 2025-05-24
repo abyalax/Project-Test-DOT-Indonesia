@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useQuizHistoryStore } from "@/hooks/use-history-quiz";
+import { useQuizHistoryStore } from "@/stores/use-history-quiz";
 import type { QuizResult } from "@/types/quiz-history";
 
 export function TableResult({ idQuiz: id }: { idQuiz?: string }) {

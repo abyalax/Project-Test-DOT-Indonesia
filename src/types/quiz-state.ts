@@ -26,9 +26,9 @@ export type QuizStore = {
 
     startQuiz: (questions: Question[]) => void;
     pauseQuiz: (questionTimer: number) => void;
-    resumeQuiz: (category: string) => void;
+    resumeQuiz: (category: string, difficulty: string) => void;
     resetQuiz: () => void;
-    finishQuiz: (category: string) => void;
+    finishQuiz: (category: string, difficulty: string) => void;
     answerQuestion: (answer: string) => void;
     nextQuestion: () => void;
     timeOutQuestion: () => void;

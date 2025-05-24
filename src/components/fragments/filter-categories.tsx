@@ -5,7 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useState } from "react"
 import { listsCategory } from "@/mock-data"
-import { useQuizFilterStore } from "@/hooks/use-quiz-filter"
+import { useQuizFilterStore } from "@/stores/use-quiz-filter"
 
 export function FilterCategories() {
     const [open, setOpen] = useState(false)
